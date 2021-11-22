@@ -1,0 +1,22 @@
+{
+	"name": "Highlight & Search",
+	"description": "Just highlight anything",
+	"version": "1.0.0",
+	"manifest_version": 3,
+	"background": {
+		"service_worker": "background.js"
+	},
+	"permissions": [
+		"activeTab",
+		"scripting",
+		"tabs"
+	],
+	"icons": {
+		"16": "./icons/highlightandsearch16.png",
+		"32": "./icons/highlightandsearch32.png",
+		"48": "./icons/highlightandsearch48.png",
+		"64": "./icons/highlightandsearch64.png",
+		"128": "./icons/highlightandsearch128.png"
+	},
+	"action": {}
+  }
