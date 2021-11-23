@@ -1,77 +1,112 @@
 console.log('start');
-document.addEventListener('mouseup', highlightAndSearch);
+document.addEventListener('selectionchange', highlightAndSearch);
 
+const orange = '#eba565e6';
 const searchButtonClass = createUnique('highlightAndSearchButton');
+const searchButtonHiddenClass = `${searchButtonClass}--hidden`;
+const searchButtonVisibleClass = `${searchButtonClass}--visible`;
+const iconUrl = chrome.runtime.getURL('icons/highlightandsearch_magnifier.png');
+const searchButton = createSearchButton();
 
+let selectionText = null;
+
+searchButton.addEventListener('click', onSearchButtonClick);
+
+appendSearchButtonToBody(searchButton);
+createStyles();
+
+function onSearchButtonClick() {
+
+}
 
 function highlightAndSearch() {
 	const selection = document.getSelection();
-	const selectionText = selection.toString();
+	selectionText = selection.toString();
 
 	if (!selectionText) {
+		hideSearchButton();
+
 		return;
 	}
 
-	createStyles();
-
-	console.log('selection: ', selection);
-
-	console.log(getSelectionCoordinates(selection));
-
 	const selectionCoordinates = getSelectionCoordinates(selection);
-	const searchButton = document.createElement('button');
 
-	searchButton.innerText = 'Search';
-	searchButton.className = searchButtonClass;
-	document.body.append(searchButton);
-
-	placeSearchButton(searchButton, selectionCoordinates)
+	applySearchButtonCoordinates(searchButton, selectionCoordinates);
+	showSearchButton();
 
 	// document.removeEventListener('mouseup', highlightAndSearch)
 }
 
 function getSelectionCoordinates(selection) {
-	const oRange = selection.getRangeAt(0);
-	const oRect = oRange.getBoundingClientRect();
+	const firstSelection = selection.getRangeAt(0);
 
-	return oRect;
+	return firstSelection.getBoundingClientRect();
 }
 
-function placeSearchButton(searchButton, selectionCoordinates) {
-	if (window.innerHeight - selectionCoordinates.bottom - searchButton.offsetHeight > 0) {
-		searchButton.style.top = selectionCoordinates.bottom + window.scrollY + 'px';
+function applySearchButtonCoordinates(searchButton, selectionCoordinates) {
+	const px = 'px';
+
+	if (window.innerHeight - selectionCoordinates.bottom - searchButton.offsetHeight >= 0) {
+		searchButton.style.top = selectionCoordinates.bottom + window.scrollY + px;
 	} else {
-		searchButton.style.top = selectionCoordinates.top - searchButton.offsetHeight + window.scrollY + 'px';
+		searchButton.style.top = selectionCoordinates.top - searchButton.offsetHeight + window.scrollY + px;
 	}
 
-	// check if it works when there is y-axis scroll bar
-	if (window.innerWidth / 2 - selectionCoordinates.left > 0) {
-		searchButton.style.left = selectionCoordinates.left + window.scrollX + 'px';
-	} else {
-		searchButton.style.right = window.innerWidth - selectionCoordinates.right + 'px';
-	};
+	searchButton.style.left = selectionCoordinates.left + selectionCoordinates.width / 2 - searchButton.offsetWidth / 2 + window.scrollX + px;
 }
 
 function createStyles() {
 	const styles = document.createElement('style');
-	// todo: find all text tags
+
 	styles.innerHTML = `
 		.${searchButtonClass} {
-			position: absolute;
-			width: 50px;
-			height: 50px;
-			color: #f2f2f2;
-			background-image: url('./icons/highlightandsearch128.png');
-			border-radius: 3px;
-			box-shadow: 0 0 4px #f2f2f2;
-			z-index: 9999;
+			position: absolute !important;
+			width: 40px !important;
+			height: 40px !important;
+			background: url(${iconUrl}) no-repeat center ${orange} !important;
+			background-size: contain !important;
+			margin: 0 !important;
+			padding: 0 !important;
+			border: none !important;
+			box-shadow: none !important;
+			cursor: pointer !important;
+			border-radius: 50% !important;
+			z-index: 9999 !important;
+		}
+
+		.${searchButtonHiddenClass} {
+			visibility: hidden !important;
+		}
+
+		.${searchButtonVisibleClass} {
+			visibility: visible !important;
 		}
 	`;
 	document.getElementsByTagName('head')[0].append(styles);
 }
 
 function createUnique(str) {
-	const uniqueString = 'L8jAd7LRN8';
+	const uniqueString = '_L8jAd7LRN8';
 
 	return str + uniqueString;
+}
+
+function createSearchButton() {
+	const searchButton = document.createElement('button');
+
+	searchButton.classList.add(searchButtonClass, searchButtonHiddenClass);
+
+	return searchButton;
+}
+
+function appendSearchButtonToBody(searchButton) {
+	document.body.append(searchButton);
+}
+
+function hideSearchButton() {
+	searchButton.classList.replace(searchButtonVisibleClass, searchButtonHiddenClass);
+}
+
+function showSearchButton() {
+	searchButton.classList.replace(searchButtonHiddenClass, searchButtonVisibleClass);
 }
