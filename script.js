@@ -1,11 +1,11 @@
 console.log('start');
 document.addEventListener('selectionchange', highlightAndSearch);
 
-const orange = '#eba565e6';
+const glass = '#a8ccd766';
 const searchButtonClass = createUnique('highlightAndSearchButton');
 const searchButtonHiddenClass = `${searchButtonClass}--hidden`;
 const searchButtonVisibleClass = `${searchButtonClass}--visible`;
-const iconUrl = chrome.runtime.getURL('icons/highlightandsearch_magnifier.png');
+const iconUrl = chrome.runtime.getURL('icons/highlightandsearch256w.png');
 const searchButton = createSearchButton();
 
 let selectionText = null;
@@ -47,12 +47,12 @@ function applySearchButtonCoordinates(searchButton, selectionCoordinates) {
 	const px = 'px';
 
 	if (window.innerHeight - selectionCoordinates.bottom - searchButton.offsetHeight >= 0) {
-		searchButton.style.top = selectionCoordinates.bottom + window.scrollY + px;
+		searchButton.style.top = selectionCoordinates.bottom + searchButton.offsetHeight / 2 + window.scrollY + px;
 	} else {
-		searchButton.style.top = selectionCoordinates.top - searchButton.offsetHeight + window.scrollY + px;
+		searchButton.style.top = selectionCoordinates.top - searchButton.offsetHeight / 2 + window.scrollY + px;
 	}
 
-	searchButton.style.left = selectionCoordinates.left + selectionCoordinates.width / 2 - searchButton.offsetWidth / 2 + window.scrollX + px;
+	searchButton.style.left = selectionCoordinates.left + selectionCoordinates.width / 2 + window.scrollX + px;
 }
 
 function createStyles() {
@@ -63,8 +63,10 @@ function createStyles() {
 			position: absolute !important;
 			width: 40px !important;
 			height: 40px !important;
-			background: url(${iconUrl}) no-repeat center ${orange} !important;
+			transform: translate(-50%, -50%);
+			background: url(${iconUrl}) no-repeat center ${glass} !important;
 			background-size: contain !important;
+			backdrop-filter: blur(0.5px);
 			margin: 0 !important;
 			padding: 0 !important;
 			border: none !important;
@@ -72,6 +74,12 @@ function createStyles() {
 			cursor: pointer !important;
 			border-radius: 50% !important;
 			z-index: 9999 !important;
+			transition: width .2s, height .2s;
+		}
+
+		.${searchButtonClass}:hover {
+			width: 50px !important;
+			height: 50px !important;
 		}
 
 		.${searchButtonHiddenClass} {
