@@ -2,7 +2,7 @@ console.log('start');
 document.addEventListener('selectionchange', highlightAndSearch);
 
 const glass = '#a8ccd766';
-const searchButtonClass = createUnique('highlightAndSearchButton');
+const searchButtonClass = makeUnique('highlightAndSearchButton');
 const searchButtonHiddenClass = `${searchButtonClass}--hidden`;
 const searchButtonVisibleClass = `${searchButtonClass}--visible`;
 const iconUrl = chrome.runtime.getURL('icons/highlightandsearch256w.png');
@@ -16,7 +16,7 @@ appendSearchButtonToBody(searchButton);
 createStyles();
 
 function onSearchButtonClick() {
-
+	chrome.runtime.sendMessage({ searchQuery: selectionText });
 }
 
 function highlightAndSearch() {
@@ -93,7 +93,7 @@ function createStyles() {
 	document.getElementsByTagName('head')[0].append(styles);
 }
 
-function createUnique(str) {
+function makeUnique(str) {
 	const uniqueString = '_L8jAd7LRN8';
 
 	return str + uniqueString;
