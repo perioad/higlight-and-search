@@ -1,54 +1,56 @@
 console.log('start');
 document.addEventListener('selectionchange', highlightAndSearch);
+document.addEventListener('mouseup', placeSearchButton);
 
-const glass = '#a8ccd766';
-const uniquePostfix = 'L8jAd7LRN8';
-const searchButtonClass = `highlightAndSearchButton_${uniquePostfix}`;
+const IMPORTANT = 'important';
+const postfix = 'L8jAd7LRN8';
+const PX = 'px';
+const searchButtonClass = `highlightAndSearchButton_${postfix}`;
 const searchButtonHiddenClass = `${searchButtonClass}--hidden`;
 const searchButtonVisibleClass = `${searchButtonClass}--visible`;
 const searchButton = createSearchButton();
 
-let selectionText = null;
+let state = {
+	selection: null,
+	selectionText: null,
+	isNewSelection: null,
+};
 
 function onSearchButtonClick() {
-	chrome.runtime.sendMessage({ searchQuery: selectionText });
+	hideSearchButton();
+	chrome.runtime.sendMessage({ searchQuery: state.selectionText });
 }
 
 function highlightAndSearch() {
-	const selection = document.getSelection();
+	state.selection = document.getSelection();
+	state.selectionText = state.selection.toString();
 
-	selectionText = selection.toString();
-
-	if (!selectionText) {
+	if (!state.selectionText) {
 		hideSearchButton();
 
 		return;
 	}
 
-	const selectionCoordinates = getSelectionCoordinates(selection);
-
-	applySearchButtonCoordinates(searchButton, selectionCoordinates);
-	showSearchButton();
+	state.isNewSelection = true;
 }
 
-function getSelectionCoordinates(selection) {
-	const firstSelection = selection.getRangeAt(0);
+function placeSearchButton(event) {
+	event.stopPropagation();
 
-	return firstSelection.collapsed
-		? firstSelection.startContainer.getBoundingClientRect()
-		: firstSelection.getBoundingClientRect();
-}
-
-function applySearchButtonCoordinates(searchButton, selectionCoordinates) {
-	const px = 'px';
-
-	if (window.innerHeight - selectionCoordinates.bottom - searchButton.offsetHeight >= 0) {
-		searchButton.style.top = selectionCoordinates.bottom + searchButton.offsetHeight / 2 + window.scrollY + px;
-	} else {
-		searchButton.style.top = selectionCoordinates.top - searchButton.offsetHeight / 2 + window.scrollY + px;
+	if (!state.selectionText || !state.isNewSelection) {
+		return;
 	}
 
-	searchButton.style.left = selectionCoordinates.left + selectionCoordinates.width / 2 + window.scrollX + px;
+	const left = event.x + window.scrollX + PX;
+	const top = isEventOnTopScreenHalf(event)
+		? event.y + window.scrollY + searchButton.offsetHeight / 1.5 + PX
+		: event.y + window.scrollY - searchButton.offsetHeight / 1.5 + PX;
+
+	searchButton.style.setProperty('left', left, IMPORTANT);
+	searchButton.style.setProperty('top', top, IMPORTANT);
+
+	showSearchButton();
+	state.isNewSelection = false;
 }
 
 function createSearchButton() {
@@ -56,15 +58,11 @@ function createSearchButton() {
 	const iconUrl = chrome.runtime.getURL('icons/highlightandsearch256w.png');
 
 	searchButton.classList.add(searchButtonClass, searchButtonHiddenClass);
-	searchButton.style.backgroundImage = `url(${iconUrl}`;
+	searchButton.style.setProperty('background-image', `url(${iconUrl}`, IMPORTANT);
 	searchButton.addEventListener('click', onSearchButtonClick);
-	appendSearchButtonToBody(searchButton);
+	document.body.append(searchButton);
 
 	return searchButton;
-}
-
-function appendSearchButtonToBody(searchButton) {
-	document.body.append(searchButton);
 }
 
 function hideSearchButton() {
@@ -73,4 +71,8 @@ function hideSearchButton() {
 
 function showSearchButton() {
 	searchButton.classList.replace(searchButtonHiddenClass, searchButtonVisibleClass);
+}
+
+function isEventOnTopScreenHalf(event) {
+	return window.innerHeight / 2 - event.y > 0;
 }

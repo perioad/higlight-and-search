@@ -1,6 +1,6 @@
 {
-	"name": "Highlight & Search",
-	"description": "Just highlight and search anything",
+	"name": "Highlight 2 Search",
+	"description": "Just highlight to search anything",
 	"version": "1.0.0",
 	"manifest_version": 3,
 	"background": {

@@ -9,8 +9,9 @@ chrome.action.onClicked.addListener(async () => {
 	// chrome.tabs.onActivated.addListener(activeInfo => console.log(activeInfo));
 
 
-	chrome.runtime.onMessage.addListener(openNewTabWithSearch);
 });
+
+chrome.runtime.onMessage.addListener(openNewTabWithSearch);
 
 async function getCurrentTabId() {
 	const queryOptions = { active: true, currentWindow: true };

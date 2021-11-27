@@ -4,8 +4,8 @@
 	--glass: #a8ccd766;
 
 	position: absolute !important;
-	width: 40px !important;
-	height: 40px !important;
+	width: 35px !important;
+	height: 35px !important;
 	transform: translate(-50%, -50%);
 	background-repeat: no-repeat !important;
 	background-position: center !important;
@@ -19,12 +19,14 @@
 	cursor: pointer !important;
 	border-radius: 50% !important;
 	z-index: 9999 !important;
+	outline: none !important;
+	box-shadow: none !important;
 	transition: width .2s, height .2s;
 }
 
 .highlightAndSearchButton_L8jAd7LRN8:hover {
-	width: 50px !important;
-	height: 50px !important;
+	width: 45px !important;
+	height: 45px !important;
 }
 
 .highlightAndSearchButton_L8jAd7LRN8--hidden {
