@@ -41,10 +41,10 @@ function placeSearchButton(event) {
 		return;
 	}
 
-	const left = event.x + window.scrollX + PX;
+	const left = event.x + window.scrollX + 10 + PX;
 	const top = isEventOnTopScreenHalf(event)
-		? event.y + window.scrollY + searchButton.offsetHeight / 1.5 + PX
-		: event.y + window.scrollY - searchButton.offsetHeight / 1.5 + PX;
+		? event.y + window.scrollY + 10 + PX
+		: event.y + window.scrollY + 10 + PX;
 
 	searchButton.style.setProperty('left', left, IMPORTANT);
 	searchButton.style.setProperty('top', top, IMPORTANT);

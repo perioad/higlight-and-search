@@ -1,23 +1,24 @@
 
 
 .highlightAndSearchButton_L8jAd7LRN8 {
-	--glass: #a8ccd766;
+	/* --glass: #a8ccd766; */
 
 	position: absolute !important;
-	width: 35px !important;
-	height: 35px !important;
+	width: 30px !important;
+	height: 30px !important;
 	transform: translate(-50%, -50%);
 	background-repeat: no-repeat !important;
 	background-position: center !important;
-	background-color: var(--glass) !important;
+	background-color: transparent !important;
+	/* background-color: var(--glass) !important; */
 	background-size: contain !important;
-	backdrop-filter: blur(0.5px);
+	/* backdrop-filter: blur(0.5px); */
 	margin: 0 !important;
 	padding: 0 !important;
 	border: none !important;
 	box-shadow: none !important;
 	cursor: pointer !important;
-	border-radius: 50% !important;
+	/* border-radius: 50% !important; */
 	z-index: 9999 !important;
 	outline: none !important;
 	box-shadow: none !important;
@@ -25,8 +26,8 @@
 }
 
 .highlightAndSearchButton_L8jAd7LRN8:hover {
-	width: 45px !important;
-	height: 45px !important;
+	width: 60px !important;
+	height: 60px !important;
 }
 
 .highlightAndSearchButton_L8jAd7LRN8--hidden {
