@@ -1,27 +1,73 @@
-chrome.action.onClicked.addListener(async () => {
-	const currentTabId = await getCurrentTabId();
+console.log("background start");
 
-	chrome.scripting.executeScript({
-		target: { tabId: currentTabId },
-		files: ['script.js'],
-	});
+const searchEngines = {
+	google: 'https://www.google.com/search?q=',
+	yandex: 'https://yandex.ru/search/?text=',
+	duckDuckGo: 'https://duckduckgo.com/?q=',
+	cambridgeDictionary: 'https://dictionary.cambridge.org/us/dictionary/english/',
+	merriamWebsterDictionary: 'https://www.merriam-webster.com/dictionary/',
+};
+let currentSearchEngine = 'google';
 
-	// chrome.tabs.onActivated.addListener(activeInfo => console.log(activeInfo));
+chrome.runtime.onInstalled.addListener(
+	async (details) => {
+		if (details.reason === 'install') {
+			const initialStorage = {
+				isOn: true,
+				searchEngine: 'google',
+				offSites: [],
+			};
 
+			await chrome.storage.sync.set(initialStorage);
+		}
+	}
+);
+chrome.runtime.onMessage.addListener(handleMessages);
+chrome.storage.onChanged.addListener(function (changes) {
+	const { searchEngine } = changes;
 
+	if (searchEngine !== undefined) {
+		currentSearchEngine = searchEngine.newValue;
+	}
 });
 
-chrome.runtime.onMessage.addListener(openNewTabWithSearch);
-
-async function getCurrentTabId() {
-	const queryOptions = { active: true, currentWindow: true };
+async function getCurrentTab() {
+	const w = await chrome.windows.getCurrent();
+	const queryOptions = { active: true, windowId: w.id };
 	const [tab] = await chrome.tabs.query(queryOptions);
 
-	return tab.id;
+	return tab;
 }
 
-function openNewTabWithSearch({ searchQuery }) {
-	chrome.tabs.create({
-		url: `https://www.google.com/search?q=${searchQuery}`,
-	});
+function getHostname(url) {
+	return new URL(url).hostname;
 }
+
+async function handleMessages({ searchQuery }) {
+	if (searchQuery) {
+		const url = `${searchEngines[currentSearchEngine]}${searchQuery}`;
+
+		chrome.tabs.create({
+			url,
+		});
+	}
+
+	// if (offThisSite !== undefined && offThisSite) {
+	// 	const tab = await getCurrentTab();
+	// 	const hostname = getHostname(tab.url);
+	// 	tab.url;
+	// } else if (offThisSite !== undefined && !offThisSite) {
+	// 	const tab = await getCurrentTab();
+	// 	tab.url;
+	// }
+}
+
+(async () => {
+	const { searchEngine } = await chrome.storage.sync.get(['searchEngine']);
+
+	if (searchEngine !== undefined) {
+		currentSearchEngine = searchEngine;
+	}
+})();
+
+console.log("background end");

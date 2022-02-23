@@ -1,6 +1,16 @@
-console.log('start');
-document.addEventListener('selectionchange', highlightAndSearch);
-document.addEventListener('mouseup', placeSearchButton);
+/*
+	TODO:
+	1. hide icon if the user presses backspace
+	2. ctrl + a not showing icon
+	3. stop propagation on listeners?
+	4. check permissions
+	5. remove listeners?
+	6. handle selection of an empty string
+	7. // chrome.windows.create(
+	   // 	{ type: 'popup', url: 'http://www.google.com', width: 600, height: 400 }
+	   // )
+	8.
+*/
 
 const IMPORTANT = 'important';
 const postfix = 'L8jAd7LRN8';
@@ -76,3 +86,34 @@ function showSearchButton() {
 function isEventOnTopScreenHalf(event) {
 	return window.innerHeight / 2 - event.y > 0;
 }
+
+function runHiglightAndSearch() {
+	document.addEventListener('selectionchange', highlightAndSearch);
+	document.addEventListener('mouseup', placeSearchButton);
+}
+
+function disableHiglightAndSearch() {
+	hideSearchButton();
+	document.removeEventListener('selectionchange', highlightAndSearch);
+	document.removeEventListener('mouseup', placeSearchButton);
+}
+
+chrome.storage.onChanged.addListener(function (changes) {
+	const { isOn } = changes;
+
+	if (isOn !== undefined) {
+		if (isOn.newValue) {
+			runHiglightAndSearch();
+		} else if (!isOn.newValue) {
+			disableHiglightAndSearch();
+		}
+	}
+});
+
+(async () => {
+	console.log('start');
+
+	const { isOn } = await chrome.storage.sync.get(null);
+
+	if (isOn) runHiglightAndSearch();
+})();

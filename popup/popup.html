@@ -1,9 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="UTF-8">
-</head>
-<body>
-	<button>Hello</button>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <h1>Highlight & Search</h1>
+
+    <div id="switches" class="on-off-container">
+      <label>
+        <input id="onSwitch" name="on-off-switch" type="radio" checked />
+
+        On
+      </label>
+
+      <label>
+        <input id="offSwitch" name="on-off-switch" type="radio" />
+
+        Off
+      </label>
+    </div>
+
+    <label>
+      Perform my search on:
+
+      <select id="searchEngineSelect" name="search-engine" >
+        <optgroup label="Search engines:">
+          <option value="google">Google</option>
+          <option value="yandex">Yandex</option>
+          <option value="duckDuckGo">DuckDuckGo</option>
+        </optgroup>
+
+        <optgroup label="Dictionaries:">
+          <option value="cambridgeDictionary">Cambridge English Dictionary</option>
+          <option value="merriamWebsterDictionary">Merriam-Webster English Dictionary</option>
+        </optgroup>
+      </select>
+    </label>
+
+    <label id="off-this-site-label">
+      <input type="checkbox" id="off-this-site" />
+
+      Off on this site only
+    </label>
+
+    <script src="popup.js"></script>
+  </body>
 </html>
