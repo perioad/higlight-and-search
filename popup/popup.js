@@ -21,7 +21,9 @@
 		await chrome.storage.sync.set(storage);
 	}
 
-
+	window.offThisSiteLabel.onchange = () => {
+		chrome.runtime.sendMessage({ offThisSite: window.offThisSite });
+	}
 	// const offThisSiteLabelId = 'off-this-site-label';
 	// const offThisSiteId = 'off-this-site';
 

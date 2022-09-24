@@ -24,6 +24,7 @@ let state = {
 	selection: null,
 	selectionText: null,
 	isNewSelection: null,
+	offSites: [],
 };
 
 function onSearchButtonClick() {
@@ -110,10 +111,22 @@ chrome.storage.onChanged.addListener(function (changes) {
 	}
 });
 
+chrome.runtime.onMessage.addListener(({offThisSite}) => {
+	if (offThisSite) {
+
+	} else {
+
+	}
+});
+
 (async () => {
 	console.log('start');
 
-	const { isOn } = await chrome.storage.sync.get(null);
+	const { isOn, offSites } = await chrome.storage.sync.get(['isOn', 'offSites']);
 
-	if (isOn) runHiglightAndSearch();
+	if (isOn && !offSites.includes(document.location.hostname)) {
+		state.offSites = offSites;
+
+		runHiglightAndSearch();
+	};
 })();
